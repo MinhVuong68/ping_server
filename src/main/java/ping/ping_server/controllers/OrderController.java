@@ -3,8 +3,10 @@ package ping.ping_server.controllers;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ping.ping_server.exception.AppException;
 import ping.ping_server.models.Order;
 import ping.ping_server.models.OrderStatus;
+import ping.ping_server.models.dto.AddOrderDTO;
 import ping.ping_server.models.dto.OrderDTO.OrderDTO;
 import ping.ping_server.repositories.OrderRepository;
 import ping.ping_server.services.OrderService;
@@ -33,4 +35,13 @@ public class OrderController {
         OrderDTO orderDTO = orderService.getOrderById(id);
         return ResponseEntity.ok(orderDTO);
     }
+
+    @PostMapping("")
+    public ResponseEntity<?> addOrder(@RequestBody AddOrderDTO addOrderDTO) {
+        Object response = orderService.addOrder(addOrderDTO);
+        if(response instanceof AppException)
+            return ResponseEntity.status(((AppException) response).getCode()).body(response);
+        return ResponseEntity.ok().body(response);
+    }
+
 }
