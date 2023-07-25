@@ -107,13 +107,17 @@ public class OrderServiceImpl implements OrderService {
 
         Customer customer = customerRepository.findById(addOrderDTO.getCustomerId()).orElse(null);
         Driver driver = driverRepository.findById(addOrderDTO.getDriverId()).orElse(null);
-        Discount discount = discountRepository.findById(addOrderDTO.getDiscountId()).orElse(null);
+        Discount discount = null;
+        if(addOrderDTO.getDiscountId()!=null) {
+            discount = discountRepository.findById(addOrderDTO.getDiscountId()).orElse(null);
+        }
+
 
         Order order = mapper.map(addOrderDTO, Order.class);
-        order.setOrderStatus(OrderStatus.COMING);
+        order.setOrderStatus(OrderStatus.DRIVER_ACCEPT_PENDING);
         order.setCustomer(customer);
         order.setDriver(driver);
-        order.setDiscount(discount);
+        if(discount!=null) order.setDiscount(discount);
         order.setCustomerRequireAt(LocalDateTime.now());
 
         if (driver != null) {
