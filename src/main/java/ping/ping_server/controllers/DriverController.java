@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import ping.ping_server.exception.AppException;
 import ping.ping_server.models.dto.LoginDTO;
 import ping.ping_server.models.dto.StatusLocationDTO;
+import ping.ping_server.models.dto.UpdateOrderStatusDTO;
 import ping.ping_server.models.response.DriverResponse;
 import ping.ping_server.services.DriverService;
 
@@ -33,6 +34,14 @@ public class DriverController {
     @PostMapping("/status_location")
     public ResponseEntity<?> updateStatusAndLocation(@RequestBody StatusLocationDTO statusLocationDTO) {
         Object response = driverService.updateStatusAndLocation(statusLocationDTO);
+        if(response instanceof AppException)
+            return ResponseEntity.status(((AppException) response).getCode()).body(response);
+        return ResponseEntity.ok().body(response);
+    }
+
+    @PutMapping("/updateOrderStatus")
+    public ResponseEntity<?> updateOrderStatus(@RequestBody UpdateOrderStatusDTO updateOrderStatusDTO) {
+        Object response = driverService.updateOrderStatus(updateOrderStatusDTO);
         if(response instanceof AppException)
             return ResponseEntity.status(((AppException) response).getCode()).body(response);
         return ResponseEntity.ok().body(response);

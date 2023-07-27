@@ -7,11 +7,15 @@ import org.springframework.stereotype.Service;
 import ping.ping_server.exception.AppException;
 import ping.ping_server.models.Driver;
 import ping.ping_server.models.DriverStatus;
+import ping.ping_server.models.Order;
+import ping.ping_server.models.OrderStatus;
 import ping.ping_server.models.dto.LoginDTO;
 import ping.ping_server.models.dto.StatusLocationDTO;
+import ping.ping_server.models.dto.UpdateOrderStatusDTO;
 import ping.ping_server.models.response.DriverResponse;
 import ping.ping_server.models.response.UpdateStatusAndLocationResponse;
 import ping.ping_server.repositories.DriverRepository;
+import ping.ping_server.repositories.OrderRepository;
 import ping.ping_server.services.DriverService;
 import ping.ping_server.services.JwtService;
 
@@ -23,6 +27,7 @@ import java.util.List;
 public class DriverServiceImpl implements DriverService {
 
     private final DriverRepository driverRepository;
+    private final OrderRepository orderRepository;
     private final ModelMapper modelMapper;
     private final PasswordEncoder passwordEncoder;
     private final ModelMapper mapper;
@@ -70,5 +75,17 @@ public class DriverServiceImpl implements DriverService {
             );
             return modelMapper.map(statusLocationDTO, UpdateStatusAndLocationResponse.class);
         } else return null;
+    }
+
+    @Override
+    public Object updateOrderStatus(UpdateOrderStatusDTO updateOrderStatusDTO) {
+        Order order = orderRepository.findByDriverIdAndOrderStatus(updateOrderStatusDTO.getDriverId(), OrderStatus.DRIVER_ACCEPT_PENDING);
+        if(order == null) {
+            return AppException.builder().code(404).message("Couldn't find any orders with pending status").build();
+        } else {
+            order.setOrderStatus(updateOrderStatusDTO.getOrderStatus());
+            orderRepository.save(order);
+            return updateOrderStatusDTO;
+        }
     }
 }

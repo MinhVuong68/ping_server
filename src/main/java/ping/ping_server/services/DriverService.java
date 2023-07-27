@@ -4,6 +4,7 @@ import ping.ping_server.models.Driver;
 import ping.ping_server.models.DriverStatus;
 import ping.ping_server.models.dto.LoginDTO;
 import ping.ping_server.models.dto.StatusLocationDTO;
+import ping.ping_server.models.dto.UpdateOrderStatusDTO;
 import ping.ping_server.models.response.DriverResponse;
 
 import java.util.List;
@@ -14,4 +15,6 @@ public interface DriverService {
     List<DriverResponse> getAllDriverOnlineByVehicleId(Long vehicleId);
 
     Object updateStatusAndLocation(StatusLocationDTO statusLocationDTO);
+
+    Object updateOrderStatus(UpdateOrderStatusDTO updateOrderStatusDTO);
 }

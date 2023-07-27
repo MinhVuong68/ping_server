@@ -134,6 +134,6 @@ public class OrderServiceImpl implements OrderService {
             discountRepository.save(discount);
         }
         orderRepository.save(order);
-        return addOrderDTO;
+        return order;
     }
 }
