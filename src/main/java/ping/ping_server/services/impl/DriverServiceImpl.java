@@ -88,4 +88,9 @@ public class DriverServiceImpl implements DriverService {
             return updateOrderStatusDTO;
         }
     }
+
+    @Override
+    public Object getOrdersByOrderStatusAndDriverId(OrderStatus orderStatus, Long driverId) {
+        return orderRepository.findByOrderStatusAndDriverId(orderStatus,driverId);
+    }
 }

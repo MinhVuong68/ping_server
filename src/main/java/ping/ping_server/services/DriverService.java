@@ -2,6 +2,7 @@ package ping.ping_server.services;
 
 import ping.ping_server.models.Driver;
 import ping.ping_server.models.DriverStatus;
+import ping.ping_server.models.OrderStatus;
 import ping.ping_server.models.dto.LoginDTO;
 import ping.ping_server.models.dto.StatusLocationDTO;
 import ping.ping_server.models.dto.UpdateOrderStatusDTO;
@@ -17,4 +18,6 @@ public interface DriverService {
     Object updateStatusAndLocation(StatusLocationDTO statusLocationDTO);
 
     Object updateOrderStatus(UpdateOrderStatusDTO updateOrderStatusDTO);
+
+    Object getOrdersByOrderStatusAndDriverId(OrderStatus orderStatus, Long driverId);
 }

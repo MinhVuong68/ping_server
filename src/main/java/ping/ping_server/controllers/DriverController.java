@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ping.ping_server.exception.AppException;
+import ping.ping_server.models.OrderStatus;
 import ping.ping_server.models.dto.LoginDTO;
 import ping.ping_server.models.dto.StatusLocationDTO;
 import ping.ping_server.models.dto.UpdateOrderStatusDTO;
@@ -46,4 +47,13 @@ public class DriverController {
             return ResponseEntity.status(((AppException) response).getCode()).body(response);
         return ResponseEntity.ok().body(response);
     }
+
+    @GetMapping("/getOrdersByOrderStatusAndDriverId")
+    public ResponseEntity<?> getOrdersByOrderStatusAndDriverId(@RequestParam("orderStatus")OrderStatus orderStatus,@RequestParam("driverId") Long driverId) {
+        Object response = driverService.getOrdersByOrderStatusAndDriverId(orderStatus,driverId);
+        if(response instanceof AppException)
+            return ResponseEntity.status(((AppException) response).getCode()).body(response);
+        return ResponseEntity.ok().body(response);
+    }
+
 }
