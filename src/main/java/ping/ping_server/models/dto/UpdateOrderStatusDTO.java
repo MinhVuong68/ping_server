@@ -10,5 +10,6 @@ import ping.ping_server.models.OrderStatus;
 @Builder
 public class UpdateOrderStatusDTO {
     private Long driverId;
+    private Long orderId;
     private OrderStatus orderStatus;
 }

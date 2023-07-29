@@ -41,8 +41,13 @@ public class DriverController {
     }
 
     @PutMapping("/updateOrderStatus")
-    public ResponseEntity<?> updateOrderStatus(@RequestBody UpdateOrderStatusDTO updateOrderStatusDTO) {
-        Object response = driverService.updateOrderStatus(updateOrderStatusDTO);
+    public ResponseEntity<?> updateOrderStatus(
+            @RequestParam(name = "driverId", required = true) Long driverId,
+            @RequestParam(name = "orderId", required = true) Long orderId,
+            @RequestParam(name = "orderStatus", required = true) OrderStatus orderStatus,
+            @RequestParam(name = "reasonDenied", required = false) String reasonDenied
+    ) {
+        Object response = driverService.updateOrderStatus(driverId, orderId, orderStatus, reasonDenied);
         if(response instanceof AppException)
             return ResponseEntity.status(((AppException) response).getCode()).body(response);
         return ResponseEntity.ok().body(response);

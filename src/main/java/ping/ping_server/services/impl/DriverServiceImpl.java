@@ -78,15 +78,39 @@ public class DriverServiceImpl implements DriverService {
     }
 
     @Override
-    public Object updateOrderStatus(UpdateOrderStatusDTO updateOrderStatusDTO) {
-        Order order = orderRepository.findByDriverIdAndOrderStatus(updateOrderStatusDTO.getDriverId(), OrderStatus.DRIVER_ACCEPT_PENDING);
-        if(order == null) {
-            return AppException.builder().code(404).message("Couldn't find any orders with pending status").build();
+    public Object updateOrderStatus(Long driverId, Long orderId, OrderStatus orderStatus, String reasonDenied) {
+        Order order = orderRepository.findById(orderId).orElse(null);
+        if(order==null) {
+            return AppException.builder().code(404).message("Order not found").build();
         } else {
-            order.setOrderStatus(updateOrderStatusDTO.getOrderStatus());
-            orderRepository.save(order);
-            return updateOrderStatusDTO;
+            if (order.getOrderStatus().equals(OrderStatus.COMPLETED)) {
+                return AppException.builder().code(403).message("can't update orders with COMPLETED status").build();
+            } else {
+                Driver driver = driverRepository.findById(driverId).orElse(null);
+                if (driver==null) return  AppException.builder().code(404).message("Not found driver !");
+                if(orderStatus.equals(OrderStatus.DRIVER_REJECT)){
+                    if(reasonDenied==null) {
+                        return AppException.builder().code(403).message("Missing order decline reason field when updating this status").build();
+                    } else {
+                        order.setOrderStatus(orderStatus);
+                        order.setReasonDenied(reasonDenied);
+                        driver.setDriverStatus(DriverStatus.ONLINE);
+                        orderRepository.save(order);
+                        driverRepository.save(driver);
+                    }
+                } else {
+                    if(reasonDenied!=null) {
+                        return AppException.builder().code(403).message("status does not match reason").build();
+                    } else {
+                        order.setOrderStatus(orderStatus);
+                        if(orderStatus.equals(OrderStatus.COMPLETED)) driver.setDriverStatus(DriverStatus.ONLINE);
+                        orderRepository.save(order);
+                        driverRepository.save(driver);
+                    }
+                }
+            }
         }
+        return order;
     }
 
     @Override
