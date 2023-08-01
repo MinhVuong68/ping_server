@@ -4,7 +4,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import ping.ping_server.models.Order;
 import ping.ping_server.models.OrderStatus;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public interface OrderRepository extends JpaRepository<Order,Long> {
@@ -16,5 +15,7 @@ public interface OrderRepository extends JpaRepository<Order,Long> {
 
     Order findByDriverIdAndOrderStatus(Long driverId, OrderStatus orderStatus);
 
-    List<Order> findByOrderStatusAndDriverId(OrderStatus orderStatus, Long driverId);
+    List<Order> findByOrderStatusEqualsAndDriverId(OrderStatus orderStatus, Long driverId);
+
+    //List<Order> findByDriverIdAndCustomerRequireAt(Long driver_id, LocalDateTime customerRequireAt);
 }

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import ping.ping_server.exception.AppException;
 import ping.ping_server.models.Driver;
 import ping.ping_server.models.DriverStatus;
@@ -13,12 +14,17 @@ import ping.ping_server.models.dto.LoginDTO;
 import ping.ping_server.models.dto.StatusLocationDTO;
 import ping.ping_server.models.dto.UpdateOrderStatusDTO;
 import ping.ping_server.models.response.DriverResponse;
+import ping.ping_server.models.response.OrdersOfDriverResponse;
 import ping.ping_server.models.response.UpdateStatusAndLocationResponse;
 import ping.ping_server.repositories.DriverRepository;
 import ping.ping_server.repositories.OrderRepository;
 import ping.ping_server.services.DriverService;
 import ping.ping_server.services.JwtService;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -115,6 +121,29 @@ public class DriverServiceImpl implements DriverService {
 
     @Override
     public Object getOrdersByOrderStatusAndDriverId(OrderStatus orderStatus, Long driverId) {
-        return orderRepository.findByOrderStatusAndDriverId(orderStatus,driverId);
+        return orderRepository.findByOrderStatusEqualsAndDriverId(orderStatus,driverId);
+    }
+
+    @Override
+    public Object getOrdersFilterDate(Long driverId, String dateString) {
+        int totalBill = 0;
+        long revenue = 0;
+        DateTimeFormatter formatterDate = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        List<Order> orders = orderRepository.findByOrderStatusEqualsAndDriverId(OrderStatus.COMPLETED, driverId);
+        System.out.println(orders);
+        List<Order> ordersResult = new ArrayList<>();
+        for (Order order : orders) {
+            if (dateString.equals(order.getCustomerRequireAt().format(formatterDate))) {
+                ordersResult.add(order);
+                totalBill++;
+                revenue += order.getTotalPrice();
+            }
+        }
+        return OrdersOfDriverResponse
+                .builder()
+                .orders(ordersResult)
+                .revenue(revenue)
+                .totalBill(totalBill).build();
+
     }
 }

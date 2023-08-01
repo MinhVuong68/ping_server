@@ -20,4 +20,6 @@ public interface DriverService {
     Object updateOrderStatus(Long driverId, Long orderId, OrderStatus orderStatus, String reasonDenied);
 
     Object getOrdersByOrderStatusAndDriverId(OrderStatus orderStatus, Long driverId);
+
+    Object getOrdersFilterDate(Long driverId, String dateString);
 }

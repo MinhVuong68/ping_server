@@ -54,11 +54,24 @@ public class DriverController {
     }
 
     @GetMapping("/getOrdersByOrderStatusAndDriverId")
-    public ResponseEntity<?> getOrdersByOrderStatusAndDriverId(@RequestParam("orderStatus")OrderStatus orderStatus,@RequestParam("driverId") Long driverId) {
+    public ResponseEntity<?> getOrdersByOrderStatusAndDriverId(
+            @RequestParam(name = "orderStatus") OrderStatus orderStatus,
+            @RequestParam(name = "driverId") Long driverId
+    ) {
         Object response = driverService.getOrdersByOrderStatusAndDriverId(orderStatus,driverId);
         if(response instanceof AppException)
             return ResponseEntity.status(((AppException) response).getCode()).body(response);
         return ResponseEntity.ok().body(response);
     }
 
+    @GetMapping("/getOrdersFilterDate")
+    public ResponseEntity<?> getOrdersFilterDate(
+            @RequestParam(name = "driverId") Long driverId,
+            @RequestParam(name = "date") String dateString
+    ) {
+        Object response = driverService.getOrdersFilterDate(driverId,dateString);
+        if(response instanceof AppException)
+            return ResponseEntity.status(((AppException) response).getCode()).body(response);
+        return ResponseEntity.ok().body(response);
+    }
 }
